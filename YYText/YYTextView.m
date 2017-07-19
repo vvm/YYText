@@ -262,6 +262,9 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     if (_innerContainer.isVerticalForm) {
         size.height = visibleSize.height;
         if (size.width < visibleSize.width) size.width = visibleSize.width;
+    } else if (_containerView.textVerticalAlignment == 1) {
+        size.height = MAX(size.height, visibleSize.height);
+        if (size.width < visibleSize.width) size.width = visibleSize.width;
     } else {
         size.width = visibleSize.width;
     }
@@ -404,6 +407,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
             _placeHolderView.frame = frame;
         }
     }
+    _placeHolderView.center = CGPointMake(CGRectGetWidth(self.frame) / 2.0, CGRectGetHeight(self.frame) / 2.0);
 }
 
 /// Update the `_selectedTextRange` to a single position by `_trackingPoint`.
@@ -1462,7 +1466,6 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
                     _selectedTextRange = [YYTextRange rangeWithRange:newRange];
                 }
             }
-            _selectedTextRange = [self _correctedTextRange:_selectedTextRange];
             if (notify) [_inputDelegate selectionDidChange:self];
         }
     }
@@ -1470,6 +1473,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     NSRange newRange = NSMakeRange(range.asRange.location, text.length);
     [_innerText replaceCharactersInRange:range.asRange withString:text];
     [_innerText yy_removeDiscontinuousAttributesInRange:newRange];
+    _selectedTextRange = [self _correctedTextRange:_selectedTextRange];
     if (notify) [_inputDelegate textDidChange:self];
 }
 
@@ -2101,6 +2105,8 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     _innerText.yy_alignment = textAlignment;
     [self _resetUndoAndRedoStack];
     [self _commitUpdate];
+    
+    [_containerView setNeedsDisplay];
 }
 
 - (void)setDataDetectorTypes:(UIDataDetectorTypes)dataDetectorTypes {
@@ -2257,6 +2263,9 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     
     [self _keyboardChanged];
     [self _commitUpdate];
+    
+    [_containerView setNeedsDisplay];
+    [self setNeedsDisplay];
 }
 
 - (void)setLinePositionModifier:(id<YYTextLinePositionModifier>)linePositionModifier {
@@ -3451,7 +3460,6 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         [self.delegate textViewDidChange:self];
     }
     [[NSNotificationCenter defaultCenter] postNotificationName:YYTextViewTextDidChangeNotification object:self];
-    
     _lastTypeRange = _selectedTextRange.asRange;
 }
 
