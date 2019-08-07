@@ -259,18 +259,24 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
     [self didChangeValueForKey:@"textLayout"];
     CGSize size = [_innerLayout textBoundingSize];
     CGSize visibleSize = [self _getVisibleSize];
+    CGPoint origin = CGPointZero;
     if (_innerContainer.isVerticalForm) {
         size.height = visibleSize.height;
         if (size.width < visibleSize.width) size.width = visibleSize.width;
-    } else if (_containerView.textVerticalAlignment == 1) {
+    } else if (_containerView.textVerticalAlignment == YYTextVerticalAlignmentCenter) {
         size.height = MAX(size.height, visibleSize.height);
         if (size.width < visibleSize.width) size.width = visibleSize.width;
+    } else if (_containerView.textVerticalAlignment == YYTextVerticalAlignmentBottom){
+        if (size.height < visibleSize.height) {
+            origin.y = visibleSize.height - size.height;
+        }
+        size.width = visibleSize.width;
     } else {
         size.width = visibleSize.width;
     }
     
     [_containerView setLayout:_innerLayout withFadeDuration:0];
-    _containerView.frame = (CGRect){.size = size};
+    _containerView.frame = (CGRect){.origin = origin, .size = size};
     _state.showingHighlight = NO;
     self.contentSize = size;
 }
@@ -1366,7 +1372,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         if (boundingSize.width < self.bounds.size.width) {
             if (_textVerticalAlignment == YYTextVerticalAlignmentCenter) {
                 point.x += (self.bounds.size.width - boundingSize.width) * 0.5;
-            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom) {
+            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom && (boundingSize.height > self.bounds.size.height)) {
                 point.x += (self.bounds.size.width - boundingSize.width);
             }
         }
@@ -1375,7 +1381,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         if (boundingSize.height < self.bounds.size.height) {
             if (_textVerticalAlignment == YYTextVerticalAlignmentCenter) {
                 point.y -= (self.bounds.size.height - boundingSize.height) * 0.5;
-            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom) {
+            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom && (boundingSize.height > self.bounds.size.height)) {
                 point.y -= (self.bounds.size.height - boundingSize.height);
             }
         }
@@ -1393,7 +1399,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         if (boundingSize.width < self.bounds.size.width) {
             if (_textVerticalAlignment == YYTextVerticalAlignmentCenter) {
                 point.x -= (self.bounds.size.width - boundingSize.width) * 0.5;
-            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom) {
+            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom && (boundingSize.height > self.bounds.size.height)) {
                 point.x -= (self.bounds.size.width - boundingSize.width);
             }
         }
@@ -1402,7 +1408,7 @@ typedef NS_ENUM(NSUInteger, YYTextMoveDirection) {
         if (boundingSize.height < self.bounds.size.height) {
             if (_textVerticalAlignment == YYTextVerticalAlignmentCenter) {
                 point.y += (self.bounds.size.height - boundingSize.height) * 0.5;
-            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom) {
+            } else if (_textVerticalAlignment == YYTextVerticalAlignmentBottom && (boundingSize.height > self.bounds.size.height)) {
                 point.y += (self.bounds.size.height - boundingSize.height);
             }
         }
