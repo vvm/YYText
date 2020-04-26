@@ -184,9 +184,9 @@
 }
 
 - (void)_doBlink {
-    [UIView animateWithDuration:kBlinkFadeDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations: ^{
-        if (_caretView.alpha == 1) _caretView.alpha = 0;
-        else _caretView.alpha = 1;
+    [UIView animateWithDuration:kBlinkFadeDuration delay:0 options:UIViewAnimationOptionCurveEaseInOut animations: ^{        
+        if (self.caretView.alpha == 1) self.caretView.alpha = 0;
+        else self.caretView.alpha = 1;
     } completion:NULL];
 }
 

@@ -14,6 +14,6 @@ Pod::Spec.new do |s|
   s.source_files = 'YYText/**/*.{h,m}'
   s.public_header_files = 'YYText/**/*.{h}'
   
-  s.frameworks = 'UIKit', 'CoreFoundation','CoreText', 'QuartzCore', 'Accelerate', 'MobileCoreServices'
+  s.frameworks = 'UIKit', 'CoreFoundation','CoreText', 'QuartzCore', 'Accelerate', 'CoreServices'
 
 end
